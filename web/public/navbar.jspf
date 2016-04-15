@@ -1,0 +1,62 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<div class="navbar-fixed">
+    <nav>
+        <ul id="dropdown" class="dropdown-content">
+            <li><a class="red-text darken-1 waves-effect" href="${root}/user/user.action?uid=${sessionScope.user.id}">个人中心</a>
+            </li>
+            <li><a class="red-text darken-1 waves-effect" href="notification">通知</a></li>
+            <li class="divider"></li>
+            <li><a class="red-text darken-1 waves-effect" href="${root}/user/logout.action">注销</a></li>
+        </ul>
+        <div class="nav-wrapper red darken-1 navbar-fixed">
+            <div class="container">
+                <a href="${root}/index.jsp" class="waves-effect brand-logo">求知广场</a>
+                <a href="#" data-activates="mobile-demo" class="waves-effect button-collapse"><i class="material-icons">menu</i></a>
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <div class="input-field">
+                            <input id="search" type="search" required>
+                            <label for="search" onclick="search()">
+                                <i class="material-icons text-black">search</i>
+                            </label>
+                            <i class="material-icons">close</i>
+                        </div>
+                    </li>
+                    <li class="waves-effect"><a href="${root}/index.jsp">首页</a></li>
+                    <li class="waves-effect"><a href="${root}/category/category.jsp">话题</a></li>
+                    <li class="waves-effect"><a href="/question/add.jsp">提问</a></li>
+                    <li class="userMenu"></li>
+                </ul>
+                <ul class="side-nav" id="mobile-demo">
+                    <li class="grey">
+                        <div class="input-field">
+                            <input id="msearch" type="search">
+                            <label for="msearch" onclick="msearch()">
+                                <i class="material-icons">search</i>
+                            </label>
+                            <i class="material-icons">close</i>
+                        </div>
+                    </li>
+                    <li><a class="waves-effect" href="${root}/index.jsp">首页</a></li>
+                    <li><a class="waves-effect" href="${root}/category/category.jsp">话题</a></li>
+                    <li><a class="waves-effect" href="/question/add.jsp">提问</a></li>
+                    <li class="divider"></li>
+                    <c:if test="${sessionScope.user.id!=null}">
+                        <li><a class="waves-effect"
+                               href="${root}/user/user.action?uid=${sessionScope.user.id}">${sessionScope.user.nickname}</a>
+                        </li>
+                        <li><a class="waves-effect" href="notification">通知</a></li>
+                        <li class="divider"></li>
+                        <li><a class="waves-effect" href="${root}/user/logout.action">注销</a></li>
+                    </c:if>
+                    <c:if test="${sessionScope.user.id==null}">
+                        <li class="divider"></li>
+                        <li><a class="waves-effect" href="${root}/user/login.jsp">登录</a></li>
+                    </c:if>
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

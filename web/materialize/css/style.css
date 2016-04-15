@@ -1,0 +1,13 @@
+
+.imageBox {
+    height: 180px;
+    width: 180px;
+    background: #fff;
+}
+
+.imageBox .thumbBox {
+    width: 180px;
+    height: 180px;
+}
+
+

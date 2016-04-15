@@ -1,0 +1,315 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<c:set value="${pageContext.request.contextPath}" var="root"/>
+<link href="http://fonts.useso.com/icon?family=Material+Icons" rel="stylesheet">
+<!--Import materialize.css-->
+<link type="text/css" rel="stylesheet" href="/materialize/css/materialize.min.css" media="screen,projection"/>
+
+<LINK rel=stylesheet href="/materialize/umeditor/themes/default/css/umeditor.min.css">
+
+<link rel="icon" href="/image/ico.png" type=" image/png">
+
+<!--Let browser know website is optimized for mobile-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!--Import jQuery before materialize.js-->
+<script type="text/javascript" src="/materialize/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="/materialize/js/jquery.form.js"></script>
+<script type="text/javascript" src="/materialize/js/materialize.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/materialize/umeditor/umeditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/materialize/umeditor/umeditor.min.js"></script>
+<style type="text/css">
+    body {
+        font-family: "Microsoft YaHei", 微软雅黑, "Microsoft JhengHei", 华文细黑, STHeiti, MingLiu;
+        background: #fdfdfd;
+    }
+
+    p {
+        word-wrap: break-word;
+        word-break: normal;
+        word-break: break-all;
+    }
+</style>
+<title>求知广场 | CTBU</title>
+<script type="text/javascript">
+
+    $(function () {
+
+        initSideBar();
+
+        $("img").attr('class', 'responsive-img');
+
+
+        $(".button-collapse").sideNav();
+        if (checkLogin()) {
+            $(".userMenu").html('<a class="dropdown-button" href="" data-activates="dropdown">${sessionScope.user.nickname}</a>')
+        }
+        else {
+            $(".userMenu").html('<a href="${root}/user/login.jsp">登录</a>')
+        }
+        $(".dropdown-button").dropdown({
+            belowOrigin: true,
+            hover: true
+        })
+    });
+
+
+    function search() {
+        var title = $("#search").val();
+        if (title == null || title == "") {
+            alert("请输入搜索的内容")
+        }
+        else {
+            window.location.href = '/search.jsp?title=' + title
+        }
+    }
+    function msearch() {
+        var title = $("#msearch").val();
+        if (title == null || title == "") {
+            alert("请输入搜索的内容")
+        }
+        else {
+            window.location.href = '/search.jsp?title=' + title
+        }
+    }
+
+    function checkLogin() {
+        var nickname = '${sessionScope.user.nickname}';
+        if (nickname == null || nickname == "") {
+            return false
+        }
+        else {
+            return true
+
+        }
+    }
+
+    function scrollToTop() {
+        $('html,body').animate({scrollTop: '0px'}, 600)
+    }
+
+    function jsDateDiff(publishTime) {
+        var minute = 1000 * 60;
+        var hour = minute * 60;
+        var day = hour * 24;
+        var halfamonth = day * 15;
+        var month = day * 30;
+        var d_minutes, d_hours, d_days;
+        publishTime = publishTime.substring(0, 19);
+        var dateTimeStamp = new Date(publishTime);
+        var now = new Date().getTime();
+        var diffValue = now - dateTimeStamp;
+        if (diffValue < 0) {
+            //若日期不符则弹出窗口告之
+            //alert("结束日期不能小于开始日期！");
+        }
+        var monthC = diffValue / month;
+        var weekC = diffValue / (7 * day);
+        var dayC = diffValue / day;
+        var hourC = diffValue / hour;
+        var minC = diffValue / minute;
+        if (monthC >= 1) {
+            result = "发表于:" + parseInt(monthC) + "个月前";
+        }
+        else if (weekC >= 1) {
+            result = "发表于" + parseInt(weekC) + "周前";
+        }
+        else if (dayC >= 1) {
+            result = "发表于" + parseInt(dayC) + "天前";
+        }
+        else if (hourC >= 1) {
+            result = "发表于" + parseInt(hourC) + "个小时前";
+        }
+        else if (minC >= 1) {
+            result = "发表于" + parseInt(minC) + "分钟前";
+        } else
+            result = "刚刚发表";
+        return result;
+    }
+
+    //登录
+    function login() {
+        var url = "${root}/user/login.jsp";
+        window.location.href = url
+    }
+    function question(qid) {
+        var url = "${root}/question/question.action?qid=" + qid;
+        window.location.href = url
+    }
+    //获取回答所在位置
+    function answer(aid) {
+        var url = "${root}/answer/answer.action?aid=" + aid;
+        window.location.href = url
+    }
+    //category
+    function category(cid) {
+        var url = "${root}/category/category.jsp?cid=" + cid;
+        window.location.href = url
+    }
+    //跳转到相应的主界面
+    function userHomePage(uid) {
+        var url = "${root}/user/user.action?uid=" + uid;
+        window.location.href = url
+    }
+
+    //点赞或者取消点赞
+    function addAgree(obj) {
+        var aid = obj.name;
+        var parent = obj.parentNode;
+        var text = obj.text;//获取值
+        var num = parseInt(text);
+        $.ajax({
+            url: '/agree/saveOrDeletea.action',
+            type: "post",
+            data: {
+                aid: aid
+            },
+            success: function (data) {
+                if (data == 1) {
+                    num++;
+                    obj.text = num;
+                    obj.className = "btn-floating waves-effect waves-light red darken-1";
+                }
+                else if (data == 0) {
+                    num--;
+                    obj.text = num;
+                    obj.className = "btn-floating waves-effect waves-light grey";
+                }
+                else {
+                    login();
+                }
+
+            }
+        })
+    }
+
+
+    //相应图片布局
+    function initImgClass() {
+        $("img").attr('class', 'responsive-img')
+    }
+
+    //展开回答
+    function spreadContent(hiddenContentId) {
+        var id = '#' + hiddenContentId;
+        var did = '#div' + hiddenContentId;
+        var content = $(id).val();
+        text = '<div style="word-wrap: break-word;word-break:break-all;">' + content + '</div>';
+        text = text.replace(/<img/g, '<img class="responsive-img"');
+        $(did).html(text);
+        $(id).val();
+        initImgClass();
+        var slimButtomBar = "#slimButtomBar" + hiddenContentId;
+        $(slimButtomBar).hide();
+        var spreadButtomBar = "#spreadButtomBar" + hiddenContentId;
+        $(spreadButtomBar).show()
+
+    }
+
+    function getSlimContent(hiddenContentId) {
+        var id = "#" + hiddenContentId;
+        var obj = $(id);
+        var data = slimContent(obj);
+        var did = "#div" + hiddenContentId;
+        $(did).html(data);
+        var slimButtomBar = "#slimButtomBar" + hiddenContentId;
+        $(slimButtomBar).show();
+        var spreadButtomBar = "#spreadButtomBar" + hiddenContentId;
+        $(spreadButtomBar).hide()
+    }
+
+
+    //收起回答
+    function slimContent(obj) {
+        data = obj.val();
+        var regSrc = /src=\"[^"]*\"/;
+        img = data.match(regSrc);
+        if (img == null) {
+            img = ""
+        }
+
+        fillChar = '\u200B';
+        var reg = new RegExp(fillChar, 'g');
+        var text = data.replace(reg, '').replace(/\u00a0/g, ' ');
+        text = text.replace(/<br\/>/g, ' ').replace(/<\s?img[^>]*>/gi, '');
+
+        //var text = data.replace(/<[^>]+>/g, "");//去掉所有的html标记
+
+        if (text.length > 200) {
+            text = text.substring(0, 200);
+        }
+
+        if (img != "" && img != null) {
+            img = '<div class="col s12 m12 l3"><img class="responsive-img" ' + img + '></div>';
+            text = '<div class="col s12 m12 l9" style="word-wrap: break-word;word-break:break-all;">' + text + '</div>'
+        } else {
+            text = '<div class="col s12" style="word-wrap: break-word;word-break:break-all;">' + text + '</div>'
+        }
+
+
+        var slimContent = img + text;
+        return slimContent
+    }
+
+    //登录和注册相关验证
+    function emailCheck(obj) {
+        var email = obj.val();
+        if (email.length <= 0) {
+            $("#error").html("请输入邮箱");
+            return false
+        }
+        else if (email.length > 64) {
+            $("#error").html("邮箱长度过长");
+            return false
+        }
+        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (filter.test(email)) return true;
+        else {
+            $("#error").html("您的电子邮件格式不正确");
+            return false;
+        }
+        return true;
+    }
+    function passwordValidate(obj) {
+        var password = obj.val();
+        var str = /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,32}$/;
+        if (str.test(password)) {
+            return true;
+        }
+        else {
+            $("#error").html("密码长度为6到32位");
+            return false;
+        }
+    }
+    function nicknameValidate(obj) {
+        var nickname = obj.val();
+        var str = /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{1,32}|[\u4E00-\u9FA5]{2,16}$/;
+        if (nickname.length <= 0) {
+            $("#error").html("昵称不能为空");
+            return false;
+        }
+        if (str.test(nickname)) {
+            return true;
+        }
+        else {
+            $("#error").html("昵称长度过长");
+            return false;
+        }
+    }
+
+    function initSideBar() {
+
+
+        $.ajax({
+            url: '/question/sidebarList.action',
+            type: "post",
+            success: function (data) {
+                $("#sidebarList").html("");
+                $("#sidebarList").html(data);
+            }
+        })
+
+
+    }
+</script>
